@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klien Web Chat</title>
+    <style>
+        /* Gaya untuk elemen-elemen pada halaman */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #pesan {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        input {
+            width: 80%;
+        }
+        button {
+            width: 18%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Klien Web Chat</h1>
+    <div id="pesan"></div>
+    <input type="text" id="inputPesan" placeholder="Ketik pesan...">
+    <button onclick="kirimPesan()">Kirim</button>
+
+    <script>
+        const divPesan = document.getElementById('pesan');
+        const inputPesan = document.getElementById('inputPesan');
+
+        // Menghubungkan ke WebSocket server
+        const ws = new WebSocket('ws://localhost:9091');
+
+        ws.onopen = () => {
+            tambahkanPesan('Terhubung ke server.');
+            const nama = prompt("Masukkan nama Anda:");
+            ws.send(nama); // Mengirimkan nama sebagai pesan pertama
+        };
+
+        ws.onmessage = (event) => {
+            tambahkanPesan(event.data); // Menampilkan pesan yang diterima
+        };
+
+        ws.onclose = () => {
+            tambahkanPesan('Koneksi ke server terputus.');
+        };
+
+        function kirimPesan() {
+            const pesan = inputPesan.value.trim();
+            if (pesan) {
+                ws.send(pesan);
+                inputPesan.value = '';
+                if (pesan.toLowerCase() === 'exit') {
+                    ws.close(); // Menutup koneksi jika "exit" diketik
+                }
+            }
+        }
+
+        function tambahkanPesan(pesan) {
+            const elemenBaru = document.createElement('div');
+            elemenBaru.textContent = pesan;
+            divPesan.appendChild(elemenBaru);
+            divPesan.scrollTop = divPesan.scrollHeight; // Scroll otomatis ke bawah
+        }
+    </script>
+</body>
+</html>
