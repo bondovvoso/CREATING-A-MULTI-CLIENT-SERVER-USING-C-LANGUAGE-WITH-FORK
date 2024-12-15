@@ -1,5 +1,5 @@
 # CREATING-A-MULTI-CLIENT-SERVER-USING-C-LANGUAGE-WITH-FORK
-### *HOW TO Running the Application*
+### *HOW TO run the application*
 
 #### 1. *Launch the C TCP Server*
    ```
